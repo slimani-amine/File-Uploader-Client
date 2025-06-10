@@ -76,6 +76,9 @@ export function useUploadQueue() {
             "https://58ad-196-203-25-82.ngrok-free.app"
           }/api/upload`
         );
+        xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+        xhr.setRequestHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+        xhr.setRequestHeader("Access-Control-Allow-Headers", "Content-Type");
         xhr.timeout = 300000; // 5 minutes timeout
         xhr.send(formData);
       });
