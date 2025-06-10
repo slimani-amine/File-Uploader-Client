@@ -292,7 +292,7 @@ export function FileQueue({
               Upload Queue
             </Text>
             <Text variant="bodySm" as="p" color="subdued">
-              Files are processed ${MAX_CONCURRENT_UPLOADS} at a time for optimal performance
+              Files are processed {MAX_CONCURRENT_UPLOADS} at a time for optimal performance
             </Text>
           </VerticalStack>
         </div>

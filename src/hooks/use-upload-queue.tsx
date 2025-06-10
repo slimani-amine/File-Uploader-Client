@@ -71,7 +71,7 @@ export function useUploadQueue() {
 
         const apiUrl =
           import.meta.env.VITE_API_URL ||
-          "https://58ad-196-203-25-82.ngrok-free.app";
+          "https://file-uploader.lissene.dev";
         xhr.open("POST", `${apiUrl}/api/upload`);
         xhr.withCredentials = true; // Enable credentials
         xhr.timeout = 300000; // 5 minutes timeout
