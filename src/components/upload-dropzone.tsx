@@ -1,12 +1,7 @@
 import React, { useCallback, useState } from "react";
-import {
-  Card,
-  Text,
-  Button,
-  VerticalStack,
-  Icon,
-} from "@shopify/polaris";
+import { Card, Text, Button, VerticalStack, Icon } from "@shopify/polaris";
 import { UploadMajor } from "@shopify/polaris-icons";
+import config from "../config/env";
 
 interface UploadDropzoneProps {
   onFilesSelected: (files: File[]) => void;
@@ -47,8 +42,7 @@ export const UploadDropzone = ({
         return;
       }
 
-      // Validate file sizes (500MB limit)
-      const maxSize = 500 * 1024 * 1024;
+      const maxSize = config.maxFileSize;
       const oversizedFiles = files.filter((file) => file.size > maxSize);
 
       if (oversizedFiles.length > 0) {

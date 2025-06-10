@@ -1,8 +1,9 @@
-import React, { useState, useCallback, useRef, useEffect } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { sleep, calculateBackoffDelay } from "../lib/upload-utils";
-import { FileUploadStatus, QueuedFile, UploadStats } from "../lib/schema";
+import config from "../config/env";
 import { MAX_CONCURRENT_UPLOADS, MAX_RETRY_ATTEMPTS } from "../lib/config";
+import { FileUploadStatus, QueuedFile, UploadStats } from "../lib/schema";
+import { calculateBackoffDelay, sleep } from "../lib/upload-utils";
 
 interface UploadResponse {
   id: string;
@@ -69,10 +70,7 @@ export function useUploadQueue() {
           reject(new Error("Upload timeout"));
         });
 
-        const apiUrl =
-          import.meta.env.VITE_API_URL ||
-          "https://file-uploader.lissene.dev";
-        xhr.open("POST", `${apiUrl}/api/upload`);
+        xhr.open("POST", `${config.apiUrl}/api/upload`);
         xhr.withCredentials = true; // Enable credentials
         xhr.timeout = 300000; // 5 minutes timeout
         xhr.send(formData);
@@ -93,7 +91,6 @@ export function useUploadQueue() {
     }));
 
     setQueue((prev) => [...prev, ...newQueuedFiles]);
-    console.log(`${files.length} file(s) added to upload queue`);
   }, []);
 
   const updateFileStatus = useCallback(
@@ -155,8 +152,6 @@ export function useUploadQueue() {
           progress: 100,
           uploadedFileId: result.id,
         });
-
-        console.log(`${file.name} uploaded successfully`);
       } catch (error) {
         const errorMessage =
           error instanceof Error ? error.message : "Upload failed";
@@ -197,7 +192,6 @@ export function useUploadQueue() {
 
   const clearCompleted = useCallback(() => {
     setQueue((prev) => prev.filter((file) => file.status !== "completed"));
-    console.log("All completed uploads have been removed from the queue");
   }, []);
 
   const retryAllFailed = useCallback(() => {
@@ -207,20 +201,14 @@ export function useUploadQueue() {
         retryFile(file.id);
       }
     });
-
-    if (failedFiles.length > 0) {
-      console.log(`Retrying ${failedFiles.length} failed upload(s)`);
-    }
   }, [queue, retryFile]);
 
   const pauseQueue = useCallback(() => {
     setIsPaused(true);
-    console.log("Upload queue paused");
   }, []);
 
   const resumeQueue = useCallback(() => {
     setIsPaused(false);
-    console.log("Upload queue resumed");
   }, []);
 
   useEffect(() => {
