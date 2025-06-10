@@ -16,7 +16,6 @@ interface UploadResponse {
 
 // Configuration from environment variables with fallbacks
 
-
 export function useUploadQueue() {
   const [queue, setQueue] = useState<QueuedFile[]>([]);
   const [isPaused, setIsPaused] = useState(false);
@@ -70,7 +69,13 @@ export function useUploadQueue() {
           reject(new Error("Upload timeout"));
         });
 
-        xhr.open("POST", "/api/upload");
+        xhr.open(
+          "POST",
+          `${
+            import.meta.env.VITE_API_URL ||
+            "https://58ad-196-203-25-82.ngrok-free.app"
+          }/api/upload`
+        );
         xhr.timeout = 300000; // 5 minutes timeout
         xhr.send(formData);
       });
