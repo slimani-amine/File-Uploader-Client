@@ -1,9 +1,9 @@
+import React, { Suspense } from "react";
 import { Page, Card, Layout, Text, Banner, Loading } from "@shopify/polaris";
 import { FileQueue } from "../components/file-queue";
 import { useUploadQueue } from "../hooks/use-upload-queue";
 import { UploadDropzone } from "../components/upload-dropzone";
 import { ErrorBoundary } from "../components/common/error-boundary";
-import { Suspense } from "react";
 
 export default function FileUploader() {
   const {
@@ -16,7 +16,6 @@ export default function FileUploader() {
     clearCompleted,
     retryAllFailed,
     pauseQueue,
-    error,
   } = useUploadQueue();
 
   return (
@@ -36,14 +35,6 @@ export default function FileUploader() {
             </Card>
           </ErrorBoundary>
         </Layout.Section>
-
-        {error && (
-          <Layout.Section>
-            <Banner status="critical">
-              <p>{error.message}</p>
-            </Banner>
-          </Layout.Section>
-        )}
 
         <Layout.Section>
           <ErrorBoundary>
