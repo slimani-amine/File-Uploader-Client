@@ -1,84 +1,71 @@
 # File Uploader Client
 
-A modern React-based client application for handling file uploads with a beautiful UI.
-
-## Features
-
-- Modern React with TypeScript
-- Drag and drop file upload
-- File upload queue management
-- Progress tracking
-- Responsive design
-- Beautiful UI with Tailwind CSS
-
-## Prerequisites
-
-- Node.js (v14 or higher)
-- npm or yarn
-
-## Installation
-
-1. Clone the repository:
-
-```bash
-git clone <repository-url>
-cd file-uploader-client
-```
-
-2. Install dependencies:
-
-```bash
-npm install
-# or
-yarn install
-```
-
-3. Create a `.env` file in the root directory and add your environment variables:
-
-```env
-VITE_API_URL=http://localhost:3000
-```
-
-## Development
-
-To start the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-```
-
-The application will start on http://localhost:5173 (or the port specified by Vite).
-
-## Building for Production
-
-To build the project:
-
-```bash
-npm run build
-# or
-yarn build
-```
-
-To preview the production build:
-
-```bash
-npm run preview
-# or
-yarn preview
-```
+A modern file uploader client built with React, TypeScript, and Vite.
 
 ## Project Structure
 
 ```
 src/
-  ├── components/     # Reusable UI components
-  ├── hooks/         # Custom React hooks
-  ├── lib/           # Utility functions and API clients
-  ├── pages/         # Page components
-  └── types/         # TypeScript type definitions
+├── assets/          # Static assets like images, fonts, etc.
+├── components/      # Reusable components
+│   ├── common/     # Shared components
+│   └── layout/     # Layout components
+├── config/         # Configuration files
+├── features/       # Feature-specific components and logic
+├── hooks/          # Custom React hooks
+├── lib/           # Third-party library configurations
+├── services/      # API services and external integrations
+├── styles/        # Global styles and CSS modules
+├── types/         # TypeScript type definitions
+└── utils/         # Utility functions and helpers
 ```
+
+## Getting Started
+
+1. Install dependencies:
+```bash
+npm install
+```
+
+2. Start the development server:
+```bash
+npm run dev
+```
+
+3. Build for production:
+```bash
+npm run build
+```
+
+## Features
+
+- Modern React with TypeScript
+- Vite for fast development and building
+- Clean and maintainable project structure
+- Component-based architecture
+- Type safety with TypeScript
+
+## Development Guidelines
+
+1. Follow the established folder structure
+2. Use TypeScript for all new files
+3. Keep components small and focused
+4. Write meaningful commit messages using conventional commits
+5. Maintain proper type definitions in the `types` directory
+
+## Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build
+- `npm run lint` - Run ESLint
+- `npm run type-check` - Run TypeScript type checking
+
+## Contributing
+
+1. Create a new branch for your feature
+2. Make your changes
+3. Submit a pull request
 
 ## License
 
