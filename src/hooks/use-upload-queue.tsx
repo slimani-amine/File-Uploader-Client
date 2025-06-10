@@ -69,16 +69,11 @@ export function useUploadQueue() {
           reject(new Error("Upload timeout"));
         });
 
-        xhr.open(
-          "POST",
-          `${
-            import.meta.env.VITE_API_URL ||
-            "https://58ad-196-203-25-82.ngrok-free.app"
-          }/api/upload`
-        );
-        xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
-        xhr.setRequestHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-        xhr.setRequestHeader("Access-Control-Allow-Headers", "Content-Type");
+        const apiUrl =
+          import.meta.env.VITE_API_URL ||
+          "https://58ad-196-203-25-82.ngrok-free.app";
+        xhr.open("POST", `${apiUrl}/api/upload`);
+        xhr.withCredentials = true; // Enable credentials
         xhr.timeout = 300000; // 5 minutes timeout
         xhr.send(formData);
       });
