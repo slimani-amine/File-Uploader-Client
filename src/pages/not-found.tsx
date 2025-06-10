@@ -1,3 +1,4 @@
+import React from "react";
 import { Page, Card, Text, VerticalStack } from "@shopify/polaris";
 
 export default function NotFound() {

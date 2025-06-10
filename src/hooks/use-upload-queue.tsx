@@ -1,9 +1,7 @@
-import { useState, useCallback, useRef, useEffect } from "react";
+import React, { useState, useCallback, useRef, useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
-import type { QueuedFile, FileUploadStatus, UploadStats } from "@shared/schema";
-import { sleep, calculateBackoffDelay } from "@/lib/upload-utils";
-import { useToast } from "@/hooks/use-toast";
+import { sleep, calculateBackoffDelay } from "../lib/upload-utils";
+import { FileUploadStatus, QueuedFile, UploadStats } from "../lib/schema";
 
 interface UploadResponse {
   id: string;
@@ -30,7 +28,6 @@ export function useUploadQueue() {
   const [isPaused, setIsPaused] = useState(false);
   const activeUploads = useRef<Set<string>>(new Set());
   const queryClient = useQueryClient();
-  const { toast } = useToast();
 
   const uploadMutation = useMutation({
     mutationFn: async ({
@@ -89,26 +86,18 @@ export function useUploadQueue() {
     },
   });
 
-  const addFiles = useCallback(
-    (files: File[]) => {
-      const newQueuedFiles: QueuedFile[] = files.map((file) => ({
-        id: crypto.randomUUID(),
-        file,
-        status: "queued" as FileUploadStatus,
-        progress: 0,
-        retryCount: 0,
-      }));
+  const addFiles = useCallback((files: File[]) => {
+    const newQueuedFiles: QueuedFile[] = files.map((file) => ({
+      id: crypto.randomUUID(),
+      file,
+      status: "queued" as FileUploadStatus,
+      progress: 0,
+      retryCount: 0,
+    }));
 
-      setQueue((prev) => [...prev, ...newQueuedFiles]);
-
-      toast({
-        title: "Files Added",
-        description: `${files.length} file(s) added to upload queue`,
-        variant: "default",
-      });
-    },
-    [toast]
-  );
+    setQueue((prev) => [...prev, ...newQueuedFiles]);
+    console.log(`${files.length} file(s) added to upload queue`);
+  }, []);
 
   const updateFileStatus = useCallback(
     (id: string, updates: Partial<QueuedFile>) => {
@@ -130,11 +119,7 @@ export function useUploadQueue() {
       if (!file) return;
 
       if (file.retryCount >= MAX_RETRY_ATTEMPTS) {
-        toast({
-          title: "Retry Limit Reached",
-          description: `${file.file.name} has reached maximum retry attempts`,
-          variant: "destructive",
-        });
+        console.error(`${file.file.name} has reached maximum retry attempts`);
         return;
       }
 
@@ -150,7 +135,7 @@ export function useUploadQueue() {
 
       updateFileStatus(id, { status: "queued" });
     },
-    [queue, updateFileStatus, toast]
+    [queue, updateFileStatus]
   );
 
   const uploadFile = useCallback(
@@ -174,11 +159,7 @@ export function useUploadQueue() {
           uploadedFileId: result.id,
         });
 
-        toast({
-          title: "Upload Complete",
-          description: `${file.name} uploaded successfully`,
-          variant: "default",
-        });
+        console.log(`${file.name} uploaded successfully`);
       } catch (error) {
         const errorMessage =
           error instanceof Error ? error.message : "Upload failed";
@@ -189,11 +170,7 @@ export function useUploadQueue() {
           progress: 0,
         });
 
-        toast({
-          title: "Upload Failed",
-          description: `${file.name}: ${errorMessage}`,
-          variant: "destructive",
-        });
+        console.error(`${file.name}: ${errorMessage}`);
 
         if (queuedFile.retryCount < MAX_RETRY_ATTEMPTS) {
           setTimeout(
@@ -205,7 +182,7 @@ export function useUploadQueue() {
         activeUploads.current.delete(id);
       }
     },
-    [uploadMutation, updateFileStatus, toast, retryFile]
+    [uploadMutation, updateFileStatus, retryFile]
   );
 
   const processQueue = useCallback(async () => {
@@ -223,12 +200,8 @@ export function useUploadQueue() {
 
   const clearCompleted = useCallback(() => {
     setQueue((prev) => prev.filter((file) => file.status !== "completed"));
-    toast({
-      title: "Completed Files Cleared",
-      description: "All completed uploads have been removed from the queue",
-      variant: "default",
-    });
-  }, [toast]);
+    console.log("All completed uploads have been removed from the queue");
+  }, []);
 
   const retryAllFailed = useCallback(() => {
     const failedFiles = queue.filter((f) => f.status === "failed");
@@ -239,28 +212,22 @@ export function useUploadQueue() {
     });
 
     if (failedFiles.length > 0) {
-      toast({
-        title: "Retrying Failed Uploads",
-        description: `Retrying ${failedFiles.length} failed upload(s)`,
-        variant: "default",
-      });
+      console.log(`Retrying ${failedFiles.length} failed upload(s)`);
     }
-  }, [queue, retryFile, toast]);
+  }, [queue, retryFile]);
 
   const pauseQueue = useCallback(() => {
-    setIsPaused((prev) => !prev);
-    toast({
-      title: isPaused ? "Queue Resumed" : "Queue Paused",
-      description: isPaused
-        ? "Upload queue processing resumed"
-        : "Upload queue processing paused",
-      variant: "default",
-    });
-  }, [isPaused, toast]);
+    setIsPaused(true);
+    console.log("Upload queue paused");
+  }, []);
+
+  const resumeQueue = useCallback(() => {
+    setIsPaused(false);
+    console.log("Upload queue resumed");
+  }, []);
 
   useEffect(() => {
-    const interval = setInterval(processQueue, 1000);
-    return () => clearInterval(interval);
+    processQueue();
   }, [processQueue]);
 
   const stats: UploadStats = {
@@ -283,6 +250,7 @@ export function useUploadQueue() {
     clearCompleted,
     retryAllFailed,
     pauseQueue,
+    resumeQueue,
     isUploading: uploadMutation.isPending,
   };
 }

@@ -1,17 +1,17 @@
+import React from "react";
 import {
-  Card,
-  Text,
-  Button,
-  ProgressBar,
-  Banner,
   Badge,
-  VerticalStack,
+  Banner,
+  Button,
+  Card,
   HorizontalStack,
   Layout,
-  Icon,
+  ProgressBar,
+  Text,
+  VerticalStack
 } from "@shopify/polaris";
-import type { QueuedFile, UploadStats } from "@shared/schema";
-import { formatFileSize, getFileIcon } from "@/lib/upload-utils";
+import { QueuedFile, UploadStats } from "../lib/schema";
+import { formatFileSize, getFileIcon } from "../lib/upload-utils";
 
 const DeleteIcon = (
   <svg

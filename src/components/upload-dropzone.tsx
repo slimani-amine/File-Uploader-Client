@@ -1,11 +1,9 @@
-import { useCallback, useState } from "react";
-import { useToast } from "@/hooks/use-toast";
+import React, { useCallback, useState } from "react";
 import {
   Card,
   Text,
   Button,
   VerticalStack,
-  HorizontalStack,
   Icon,
 } from "@shopify/polaris";
 import { UploadMajor } from "@shopify/polaris-icons";
@@ -20,7 +18,6 @@ export const UploadDropzone = ({
   disabled = false,
 }: UploadDropzoneProps) => {
   const [isDragOver, setIsDragOver] = useState(false);
-  const { toast } = useToast();
 
   const handleDragOver = useCallback(
     (e: React.DragEvent) => {
@@ -46,11 +43,7 @@ export const UploadDropzone = ({
 
       const files = Array.from(e.dataTransfer.files);
       if (files.length === 0) {
-        toast({
-          title: "No Files",
-          description: "No files were dropped",
-          variant: "destructive",
-        });
+        console.log("No files were dropped");
         return;
       }
 
@@ -59,17 +52,13 @@ export const UploadDropzone = ({
       const oversizedFiles = files.filter((file) => file.size > maxSize);
 
       if (oversizedFiles.length > 0) {
-        toast({
-          title: "Files Too Large",
-          description: `${oversizedFiles.length} file(s) exceed the 500MB limit`,
-          variant: "destructive",
-        });
+        console.log(`${oversizedFiles.length} file(s) exceed the 500MB limit`);
         return;
       }
 
       onFilesSelected(files);
     },
-    [disabled, onFilesSelected, toast]
+    [disabled, onFilesSelected]
   );
 
   const handleFileInput = useCallback(
