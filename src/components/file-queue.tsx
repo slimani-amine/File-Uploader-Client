@@ -8,7 +8,7 @@ import {
   Layout,
   ProgressBar,
   Text,
-  VerticalStack
+  VerticalStack,
 } from "@shopify/polaris";
 import { QueuedFile, UploadStats } from "../lib/schema";
 import { formatFileSize, getFileIcon } from "../lib/upload-utils";
@@ -226,7 +226,7 @@ export function FileQueue({
         <Banner status="warning">
           <p>
             <strong>Queue Status:</strong> Currently uploading {stats.uploading}{" "}
-            of 2 maximum concurrent files.
+            of {MAX_CONCURRENT_UPLOADS} maximum concurrent files.
             {stats.queued > 0 && ` ${stats.queued} files waiting in queue.`}
           </p>
         </Banner>
@@ -292,7 +292,8 @@ export function FileQueue({
               Upload Queue
             </Text>
             <Text variant="bodySm" as="p" color="subdued">
-              Files are processed {MAX_CONCURRENT_UPLOADS} at a time for optimal performance
+              Files are processed {MAX_CONCURRENT_UPLOADS} at a time for optimal
+              performance
             </Text>
           </VerticalStack>
         </div>
