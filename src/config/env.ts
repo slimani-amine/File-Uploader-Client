@@ -10,7 +10,7 @@ interface EnvConfig {
 }
 
 const config: EnvConfig = {
-  apiUrl: import.meta.env.VITE_API_URL || 'http://localhost:3000',
+  apiUrl: import.meta.env.VITE_API_URL || 'http://localhost:3001',
   apiTimeout: Number(import.meta.env.VITE_API_TIMEOUT) || 30000,
   maxFileSize: Number(import.meta.env.VITE_MAX_FILE_SIZE) || 10 * 1024 * 1024, // 10MB
   allowedFileTypes: (import.meta.env.VITE_ALLOWED_FILE_TYPES || 'image/jpeg,image/png,application/pdf').split(','),
