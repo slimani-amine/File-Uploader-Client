@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import config from "../config/env";
-import { MAX_CONCURRENT_UPLOADS, MAX_RETRY_ATTEMPTS } from "../lib/config";
 import { FileUploadStatus, QueuedFile, UploadStats } from "../lib/schema";
 import { calculateBackoffDelay, sleep } from "../lib/upload-utils";
 
@@ -112,7 +111,7 @@ export function useUploadQueue() {
       const file = queue.find((f) => f.id === id);
       if (!file) return;
 
-      if (file.retryCount >= MAX_RETRY_ATTEMPTS) {
+      if (file.retryCount >= config.maxRetryAttempts) {
         console.error(`${file.file.name} has reached maximum retry attempts`);
         return;
       }
@@ -164,7 +163,7 @@ export function useUploadQueue() {
 
         console.error(`${file.name}: ${errorMessage}`);
 
-        if (queuedFile.retryCount < MAX_RETRY_ATTEMPTS) {
+        if (queuedFile.retryCount < config.maxRetryAttempts) {
           setTimeout(
             () => retryFile(id),
             calculateBackoffDelay(queuedFile.retryCount)
@@ -182,7 +181,7 @@ export function useUploadQueue() {
 
     const queuedFiles = queue.filter((f) => f.status === "queued");
     const activeCount = activeUploads.current.size;
-    const availableSlots = MAX_CONCURRENT_UPLOADS - activeCount;
+    const availableSlots = config.maxConcurrentUploads - activeCount;
 
     if (availableSlots > 0 && queuedFiles.length > 0) {
       const filesToUpload = queuedFiles.slice(0, availableSlots);
@@ -197,7 +196,7 @@ export function useUploadQueue() {
   const retryAllFailed = useCallback(() => {
     const failedFiles = queue.filter((f) => f.status === "failed");
     failedFiles.forEach((file) => {
-      if (file.retryCount < MAX_RETRY_ATTEMPTS) {
+      if (file.retryCount < config.maxRetryAttempts) {
         retryFile(file.id);
       }
     });
