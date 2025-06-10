@@ -1,7 +1,9 @@
-import { Page, Card, Layout, Text, Banner } from "@shopify/polaris";
-import { FileQueue } from "@/components/file-queue";
-import { useUploadQueue } from "@/hooks/use-upload-queue";
-import { UploadDropzone } from "@/components/upload-dropzone";
+import { Page, Card, Layout, Text, Banner, Loading } from "@shopify/polaris";
+import { FileQueue } from "../components/file-queue";
+import { useUploadQueue } from "../hooks/use-upload-queue";
+import { UploadDropzone } from "../components/upload-dropzone";
+import { ErrorBoundary } from "../components/common/error-boundary";
+import { Suspense } from "react";
 
 export default function FileUploader() {
   const {
@@ -14,43 +16,62 @@ export default function FileUploader() {
     clearCompleted,
     retryAllFailed,
     pauseQueue,
+    error,
   } = useUploadQueue();
 
   return (
     <Page>
       <Layout>
         <Layout.Section>
-          <Card>
-            <div style={{ padding: "var(--p-space-400)" }}>
-              <Text variant="headingLg" as="h1">
-                File Upload Manager
-              </Text>
-              <Text variant="bodyMd" as="p" color="subdued">
-                Upload multiple files with intelligent queue management
-              </Text>
-            </div>
-          </Card>
+          <ErrorBoundary>
+            <Card>
+              <div style={{ padding: "var(--p-space-400)" }}>
+                <Text variant="headingLg" as="h1">
+                  File Upload Manager
+                </Text>
+                <Text variant="bodyMd" as="p" color="subdued">
+                  Upload multiple files with intelligent queue management
+                </Text>
+              </div>
+            </Card>
+          </ErrorBoundary>
+        </Layout.Section>
+
+        {error && (
+          <Layout.Section>
+            <Banner status="critical">
+              <p>{error.message}</p>
+            </Banner>
+          </Layout.Section>
+        )}
+
+        <Layout.Section>
+          <ErrorBoundary>
+            <Card>
+              <div style={{ padding: "var(--p-space-400)" }}>
+                <Suspense fallback={<Loading />}>
+                  <UploadDropzone onFilesSelected={addFiles} disabled={isPaused} />
+                </Suspense>
+              </div>
+            </Card>
+          </ErrorBoundary>
         </Layout.Section>
 
         <Layout.Section>
-          <Card>
-            <div style={{ padding: "var(--p-space-400)" }}>
-              <UploadDropzone onFilesSelected={addFiles} disabled={isPaused} />
-            </div>
-          </Card>
-        </Layout.Section>
-
-        <Layout.Section>
-          <FileQueue
-            queue={queue}
-            stats={stats}
-            isPaused={isPaused}
-            onRetryFile={retryFile}
-            onRemoveFile={removeFile}
-            onClearCompleted={clearCompleted}
-            onRetryAllFailed={retryAllFailed}
-            onPauseQueue={pauseQueue}
-          />
+          <ErrorBoundary>
+            <Suspense fallback={<Loading />}>
+              <FileQueue
+                queue={queue}
+                stats={stats}
+                isPaused={isPaused}
+                onRetryFile={retryFile}
+                onRemoveFile={removeFile}
+                onClearCompleted={clearCompleted}
+                onRetryAllFailed={retryAllFailed}
+                onPauseQueue={pauseQueue}
+              />
+            </Suspense>
+          </ErrorBoundary>
         </Layout.Section>
       </Layout>
     </Page>
