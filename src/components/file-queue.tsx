@@ -12,6 +12,7 @@ import {
 } from "@shopify/polaris";
 import { QueuedFile, UploadStats } from "../lib/schema";
 import { formatFileSize, getFileIcon } from "../lib/upload-utils";
+import { MAX_CONCURRENT_UPLOADS } from "../lib/config";
 
 const DeleteIcon = (
   <svg
@@ -291,7 +292,7 @@ export function FileQueue({
               Upload Queue
             </Text>
             <Text variant="bodySm" as="p" color="subdued">
-              Files are processed 2 at a time for optimal performance
+              Files are processed ${MAX_CONCURRENT_UPLOADS} at a time for optimal performance
             </Text>
           </VerticalStack>
         </div>

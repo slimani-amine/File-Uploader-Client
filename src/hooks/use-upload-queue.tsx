@@ -2,6 +2,7 @@ import React, { useState, useCallback, useRef, useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { sleep, calculateBackoffDelay } from "../lib/upload-utils";
 import { FileUploadStatus, QueuedFile, UploadStats } from "../lib/schema";
+import { MAX_CONCURRENT_UPLOADS, MAX_RETRY_ATTEMPTS } from "../lib/config";
 
 interface UploadResponse {
   id: string;
@@ -14,14 +15,7 @@ interface UploadResponse {
 }
 
 // Configuration from environment variables with fallbacks
-const MAX_CONCURRENT_UPLOADS = parseInt(
-  import.meta.env.VITE_MAX_CONCURRENT_UPLOADS || "2",
-  10
-);
-const MAX_RETRY_ATTEMPTS = parseInt(
-  import.meta.env.VITE_MAX_RETRY_ATTEMPTS || "3",
-  10
-);
+
 
 export function useUploadQueue() {
   const [queue, setQueue] = useState<QueuedFile[]>([]);
